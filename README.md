@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Gomeru 🔐⚡
 
-## Getting Started
+**Gomeru** is a Nostr MiniApp (Tool Widget) that enables lightweight, embeddable Bitcoin-powered monetization inside Nostr posts. It supports two core modes: pay-to-unlock content and Lightning payment splitting. Built using the YakiHonne Smart Widgets framework, Gomeru makes it easy to get paid directly from Nostr — no apps, no middlemen.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🚀 Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 1. Pay-to-Unlock Mode (`🔓`)
+- Lock any content (text, links, files, etc.) behind a Lightning paywall
+- Only accessible after a successful payment
+- Simple, creator-friendly monetization
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 2. Split-Tip Mode (`⚡`)
+- Accept tips or donations with sats split across multiple recipients
+- Great for teams, collaborations, or group support
+- Customizable splits per recipient
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🛠 How It Works
 
-To learn more about Next.js, take a look at the following resources:
+1. User visits the **Gomeru** widget via a Nostr post
+2. Selects content or tipping widget type
+3. Makes a Lightning payment using Alby, Wallet of Satoshi, etc.
+4. Gomeru verifies the payment:
+   - Reveals content (Pay-to-Unlock)
+   - Displays success message (Split-Tip)
+5. Behind the scenes, sats are routed through LNBits and split if needed
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## ⚙️ Technologies Used
 
-## Deploy on Vercel
+- **React + Tailwind** – UI for the widget
+- **YakiHonne Smart Widget Handler** – For Nostr Tool Widget integration
+- **LNBits API** – For invoice creation and split payments
+- **Vercel / Netlify** – Hosting the MiniApp
+- **Nostr Protocol** – For embedding and interacting with the widget in a decentralized way
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 💡 Why Gomeru?
+
+- **Decentralized Monetization** – No platform fees, no middlemen
+- **Portable** – Share it in a Nostr post, DM, or feed
+- **Composability** – Works seamlessly with Nostr clients and Bitcoin tools
+- **One-click UX** – Instant Lightning payments and content access
+
+---
+
+## 📦 Deployment
+
+To deploy your own version of Gomeru:
+
+1. Fork the repo
+2. Update your `.env` with your LNBits keys or settings
+3. Deploy to Vercel or Netlify
+4. Make sure your `/.well-known/widget.json` is correctly configured:
+```json
+{
+  "pubkey": "your-nostr-pubkey-in-hex",
+  "widget": {
+    "title": "Gomeru",
+    "appUrl": "https://your-domain.com",
+    "iconUrl": "https://your-domain.com/icon.png",
+    "imageUrl": "https://your-domain.com/preview.png",
+    "buttonTitle": "Launch Gomeru",
+    "tags": ["tool", "lightning", "paywall", "nostr"]
+  }
+}
