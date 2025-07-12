@@ -1,10 +1,10 @@
 {
-    "pubkey": "your-nostr-pubkey-in-hex",
+    "pubkey": "596fb51101e2071ad2f13b07335af3a1b26f38b32c02cae23e610c1e8ca750de",
     "widget": {
-        "title": "My Amazing Widget",
-        "appUrl": "https://your-app-url.com",
-        "iconUrl": "https://your-app-url.com/icon.png",
-        "imageUrl": "https://your-app-url.com/thumbnail.png",
+        "title": "Gomeru",
+        "appUrl": "https://goomeru.netlify.app",
+        "iconUrl": "https://goomeru.netlify.app/gomeru-logo.png",
+        "imageUrl": "https://goomeru.netlify.app/gomeru-logo.png",
         "buttonTitle": "Launch Widget",
         "tags": [
             "tool",
