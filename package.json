@@ -9,10 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@getalby/bitcoin-connect-react": "^3.8.2",
+    "@getalby/lightning-tools": "^5.2.0",
     "next": "15.3.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "smart-widget-handler": "^1.0.33"
+    "smart-widget-handler": "^1.0.33",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
