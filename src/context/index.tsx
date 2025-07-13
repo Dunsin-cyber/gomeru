@@ -6,6 +6,8 @@ type UserContextType = {
     setIsDarkMode: React.Dispatch<React.SetStateAction<boolean>>;
     paid: boolean;
     setPaid: React.Dispatch<React.SetStateAction<boolean>>;
+    userMetadata: any;
+    setUserMetadata: React.Dispatch<React.SetStateAction<any>>;
 };
 
 const UserContext = React.createContext<UserContextType | undefined>(undefined);
@@ -15,6 +17,7 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [paid, setPaid] = useState(false);
+    const [userMetadata, setUserMetadata] = useState<any>(null); // Assuming user state is needed
 
 
     return (
@@ -22,7 +25,7 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
             value={{
                 isDarkMode,
                 setIsDarkMode,
-                paid, setPaid
+                paid, setPaid, userMetadata, setUserMetadata
             }}
         >
             {children}

@@ -3,16 +3,18 @@
 import { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import SWhandler from "smart-widget-handler";
+import { useClient } from '@/context';
 
 export default function CreatePage() {
     const [content, setContent] = useState('');
     const [price, setPrice] = useState('');
     const [lud16, setLud16] = useState('');
     const [successId, setSuccessId] = useState<string | null>(null);
-    const [userMetadata, setUserMetadata] = useState<any>(null);
+    // const [userMetadata, setUserMetadata] = useState<any>(null);
     const [hostOrigin, setHostOrigin] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+    const { userMetadata, setUserMetadata } = useClient();
       // Initialize communication with host app
       useEffect(() => {
         SWhandler.client.ready();
