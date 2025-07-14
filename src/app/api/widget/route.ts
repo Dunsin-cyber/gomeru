@@ -20,7 +20,7 @@ export function GET(request: Request) {
     }
 
     const res = NextResponse.json(widget)
-    res.headers.set("Access-Control-Allow-Origin", "https://yakihonne.coem")
+    res.headers.set("Access-Control-Allow-Origin", "https://yakihonne.com")
     res.headers.set("Access-Control-Allow-Methods", "GET, OPTIONS")
     res.headers.set("Access-Control-Allow-Headers", "Content-Type")
     return res
@@ -30,7 +30,7 @@ export function OPTIONS() {
     const res = new Response(null, {
         status: 200,
     })
-    res.headers.set("Access-Control-Allow-Origin", "https://yakihonne.coem")
+    res.headers.set("Access-Control-Allow-Origin", "https://yakihonne.com")
     res.headers.set("Access-Control-Allow-Methods", "GET, OPTIONS")
     res.headers.set("Access-Control-Allow-Headers", "Content-Type")
     return res
