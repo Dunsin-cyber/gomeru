@@ -1,6 +1,6 @@
 'use client';
 import { Invoice, LightningAddress } from '@getalby/lightning-tools';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useClient } from '@/context';
 import SWHandler from 'smart-widget-handler';
@@ -14,10 +14,43 @@ const Button = dynamic(
     }
 );
 
-export function BitcoinPayWrapper({ LNURL, SATS, widgetId }: { LNURL: string, SATS: number, widgetId:string }) {
+export function BitcoinPayWrapper({ LNURL, SATS, widgetId }: { LNURL: string, SATS: number, widgetId: string }) {
     const [invoice, setInvoice] = React.useState<Invoice | undefined>(undefined);
     const [preimage, setPreimage] = React.useState<string | undefined>(undefined);
-    const { setPaid , userMetadata} = useClient();
+    const { setPaid, userMetadata, setUserMetadata } = useClient();
+    
+    // Initialize communication with host app
+    useEffect(() => {
+        SWHandler.client.ready();
+    }, []);
+
+    // Listen for messages from host app
+    useEffect(() => {
+        let listener = SWHandler.client.listen((event) => {
+            if (event.kind === "user-metadata") {
+                // Handle user metadata
+                setUserMetadata(event.data?.user);
+                console.log(event.data?.user);
+                // setHostOrigin(event.data?.host_origin);
+            }
+            if (event.kind === "err-msg") {
+                // Handle error messages
+                // setErrorMessage(event.data);
+            }
+            if (event.kind === "nostr-event") {
+                // Handle Nostr events
+                const { pubkey, id } = event.data?.event || {};
+                // Process event data
+            }
+        });
+
+        return () => {
+            // Clean up listener when component unmounts
+            listener?.close();
+        }
+    }, [])
+
+
 
     React.useEffect(() => {
         (async () => {
@@ -33,22 +66,30 @@ export function BitcoinPayWrapper({ LNURL, SATS, widgetId }: { LNURL: string, SA
 
                 const checkPaymentInterval = setInterval(async () => {
                     try {
+                        const parentOrigin =
+                            window.location.ancestorOrigins?.[0] || 'https://yakihonne.com';
+
                         await invoice.verifyPayment();
                         if (invoice.preimage) {
                             setPaid(true);
                             setPreimage(invoice.preimage);
                             clearInterval(checkPaymentInterval);
                             // Optional: send signed nostr event
-                            if (userMetadata) {
-                                SWHandler.client.requestEventPublish(
+                            console.log("Origin:", parentOrigin);
+                            console.log("userMetadata", userMetadata)
+
+                            // if (userMetadata) {
+                                const result = SWHandler.client.requestEventPublish(
                                     {
                                         kind: 1,
-                                        content: `${userMetadata.name} just unlocked widget ${widgetId}`,
+                                        content: `user just unlocked widget ${widgetId}`,
                                         tags: [['t', 'yakihonne-unlock']],
                                     },
-                                    window.location.ancestorOrigins[0]
+                                    parentOrigin
                                 );
-          }
+
+                                console.log('Event published:', result);
+                            // }
 
                         }
                     } catch (error) {

@@ -5,10 +5,13 @@ import { useEffect, useState } from 'react';
 import { BitcoinPayWrapper } from '@/components/BitcoinPayButton';
 import { useClient } from '@/context';
 
+
 export default function UnlockPage() {
     const { id } = useParams();
     const [data, setData] = useState<any>(null);
     const { paid } = useClient();
+
+
 
 
     useEffect(() => {

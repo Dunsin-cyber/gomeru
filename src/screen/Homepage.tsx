@@ -20,7 +20,6 @@ export default function CreatePage() {
         SWhandler.client.ready();
       }, []);
 
-    // TODO - get the connected client and pass the actual npub as creator
     // Listen for messages from host app
     useEffect(() => {
         let listener = SWhandler.client.listen((event) => {
