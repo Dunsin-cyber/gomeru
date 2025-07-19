@@ -114,6 +114,7 @@ export function BitcoinPayWrapper({ LNURL, SATS, widgetId }: { LNURL: string, SA
         <>
             {invoice && (
                 <Button
+                    // title={`Pay ${SATS} sats to unlock`}
                     invoice={invoice.paymentRequest}
                     onPaid={(response) => {
                         setPreimage(response.preimage);

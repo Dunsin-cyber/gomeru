@@ -18,7 +18,7 @@ export default function RootLayout({
     <html lang="en">
       <UserContextProvider>
         <body
-          className={`antialiased`}
+          className={`dark antialiased`}
         >
           {children}
         </body>
