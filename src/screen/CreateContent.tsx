@@ -11,6 +11,7 @@ export default function CreatePage() {
     const [title, setTitle] = useState('');
     const [price, setPrice] = useState('');
     const [lud16, setLud16] = useState('');
+    const [previewContent, setPreviewContent] = useState("")
     const [successId, setSuccessId] = useState<string | null>(null);
     // const [userMetadata, setUserMetadata] = useState<any>(null);
     const [hostOrigin, setHostOrigin] = useState<string | null>(null);
@@ -66,7 +67,7 @@ export default function CreatePage() {
             const { data, error } = await supabase
                 .from('paywall_content')
                 .insert([
-                    { content, price: parseInt(price), creator: userMetadata?.pubkey, lud16, views: 0, title, preview_content: content },
+                    { content, price: parseInt(price), creator: userMetadata?.pubkey, lud16, views: 0, title, preview_content: previewContent },
                 ])
                 .select()
 
@@ -90,26 +91,17 @@ export default function CreatePage() {
         <div className="p-4 max-w-lg mx-auto">
             <h2 className="font-bold text-xl mb-2">Create Locked Content</h2>
             <input placeholder="Title..." className="w-full border p-2 mb-2" value={title} onChange={(e) => setTitle(e.target.value)} />
+            <input placeholder="Preview Content" className="w-full border p-2 mb-2" value={previewContent} onChange={(e) => setPreviewContent(e.target.value)} />
             <textarea placeholder="Secret..." className="w-full border p-2 mb-2" rows={4} value={content} onChange={(e) => setContent(e.target.value)} />
             <input type="number" placeholder="Price in sats" className="w-full border p-2 mb-2" value={price} onChange={(e) => setPrice(e.target.value)} />
             <input placeholder="Your LN Address (e.g. dunsin@getalby.com)" className="w-full border p-2 mb-4" value={lud16} onChange={(e) => setLud16(e.target.value)} />
             <button onClick={handleSubmit} className="cursor-pointer bg-black text-white px-4 py-2 rounded">{loading ? "loading" : "Submit"}</button>
-            <p className="text-red ">{errorMessage}</p>
+            <p className="text-[#ef4444]">{errorMessage}</p>
             {successId && (
                 <div className="mt-4 cursor-pointer" onClick={() => router.push("/unlock/" + successId)}>
-                    ✅ Created! Share: <code>{`${window.location.origin}/unlock/${successId}`}</code>
+                    ✅ Created! View here  <code>{`${window.location.origin}/unlock/${successId}`}</code>
                 </div>
             )}
         </div>
     )
 }
-
-
-/* 
-
-const { data, error } = await supabase
-  .from('paywall_content')
-  .upsert({ some_column: 'someValue' })
-  .select()
-          
-*/

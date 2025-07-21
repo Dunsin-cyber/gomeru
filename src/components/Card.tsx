@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Lock } from "lucide-react";
 import { BitcoinPayWrapper } from '@/components/BitcoinPayButton';
 import { useClient } from '@/context';
+import supabase from "@/utils/supabase"
 
 
 type CardProps = {
@@ -23,16 +24,60 @@ const Card = ({
     lud16,
     views,
 }: CardProps) => {
-    const { paid } = useClient();
+    const { paid, setPaid, userMetadata } = useClient();
     const [showPayButton, setShowPayButton] = useState(false)
+    const [paid_, setPaid_] = useState(false)
+    const [realtimeView, setRealtimeView] = useState(views)
 
-    const handleZap = () => {
+    const handleZap = async () => {
         setShowPayButton(true);
-        // pay one sats to the lud16
-        // ad one viw to this id on supabase
-        // set the zap logic to true
-        // setUnlocked(true);
+
+        //increase the views and add user to list of viewers once payment is made
+        if (paid) {
+            const newval = views + 1
+            const { data: data2, error: err2 } = await supabase
+                .from("paywall_content")
+                .update({
+                    views: newval,
+                    viewers: userMetadata.pubkey,
+                })
+                .eq("id", id);
+            setRealtimeView(newval)
+
+
+            console.log("data2", data2, err2)
+            setPaid(false)
+            await checkIfUserPaid()
+        }
     };
+
+    const checkIfUserPaid = async () => {
+        try {
+            const { data, error } = await supabase
+                .from("paywall_content")
+                .select("viewers")
+                .eq("id", id);
+
+            if (data) {
+                console.log("viewers", data)
+                const isPaid = data.some(
+                    (viewer) => viewer.viewers === userMetadata.pubkey
+                );
+
+                if (isPaid) setPaid_(true);
+            }
+            if (error) {
+                console.log("ERROR", error)
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    useEffect(() => {
+        checkIfUserPaid()
+
+    }, [])
 
     return (
         <div id={id} className="border border-gray-300 dark:border-gray-700 p-4 rounded-2xl shadow-md bg-white dark:bg-[#1a1a1a]">
@@ -40,14 +85,14 @@ const Card = ({
 
             <p className="text-gray-700 dark:text-gray-300">{previewContent}</p>
 
-            {!paid && (
+            {!paid_ && (
                 <div className="mt-2 p-3 bg-gray-100 dark:bg-gray-800 rounded-md text-center text-gray-500 dark:text-gray-400">
                     <Lock className="inline-block w-5 h-5 mb-1" />
                     <p className="text-sm">Unlock to view full content</p>
                 </div>
             )}
 
-            {paid && (
+            {paid_ && (
                 <div className="mt-2 p-3 bg-green-50 dark:bg-green-900 rounded-md text-gray-800 dark:text-gray-100">
                     {fullContent}
                 </div>
@@ -56,33 +101,26 @@ const Card = ({
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-4 gap-3">
                 <div className="text-sm text-gray-500 dark:text-gray-400">
                     💰 <strong>{price} sats</strong> &middot; ⚡ {lud16} <br />
-                    👁️ {views} views
+                    👁️ {realtimeView} views
                 </div>
+                <>
+                    {showPayButton ? (
 
-                {!paid ? (
-                    <>
-                        {showPayButton ? (
+                        <BitcoinPayWrapper SATS={price} LNURL={lud16} widgetId={id} />
+                    ) : (
+                        <>
+                            {!paid_ && (
 
-                            <BitcoinPayWrapper SATS={price} LNURL={lud16} widgetId={id} />
-                        ) : (
-                            <button
-                                onClick={handleZap}
-                                className="bg-black text-white px-4 py-2 rounded hover:bg-gray-900"
-                            >
-                                Zap to Unlock
-                            </button>
-                        )}
-                    </>
-
-
-                ) : (
-                    <button
-                        className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-                        onClick={() => alert("Already unlocked.")}
-                    >
-                        View Full Content
-                    </button>
-                )}
+                                <button
+                                    onClick={handleZap}
+                                    className="bg-black text-white px-4 py-2 rounded hover:bg-gray-900"
+                                >
+                                    Zap to Unlock
+                                </button>
+                            )}
+                        </>
+                    )}
+                </>
             </div>
         </div>
     );
