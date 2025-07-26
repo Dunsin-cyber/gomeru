@@ -16,7 +16,7 @@ function Naviagtion() {
         SWhandler.client.ready();
     }, []);
 
-    // Listen for messages from host app
+    // Listen for messages from host app.
     useEffect(() => {
         let listener = SWhandler.client.listen((event) => {
             if (event.kind === "user-metadata") {
