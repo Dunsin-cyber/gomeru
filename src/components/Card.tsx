@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Lock } from "lucide-react";
+import { CheckCircle, Lock } from "lucide-react";
 import { BitcoinPayWrapper } from '@/components/BitcoinPayButton';
 import { useClient } from '@/context';
 import supabase from "@/utils/supabase"
@@ -104,8 +104,18 @@ const Card = ({
             )}
 
             {paid_ && (
-                <div className="mt-3 px-4 py-3 bg-green-50 dark:bg-green-900 rounded-xl text-gray-800 dark:text-gray-100 leading-relaxed">
-                    {fullContent}
+                <div className="mt-4 border border-orange-300 dark:border-orange-400 bg-white/90 dark:bg-[#1e1e1e] backdrop-blur-md px-5 py-4 rounded-2xl shadow-inner transition-all duration-300">
+
+                    {/* Optional unlocked indicator */}
+                    <div className="flex items-center gap-2 mb-3 text-orange-500 text-sm font-medium">
+                        <CheckCircle className="w-4 h-4" />
+                        <span>Content Unlocked</span>
+                    </div>
+
+                    {/* Full content */}
+                    <p className="text-gray-800 dark:text-gray-100 leading-relaxed text-base">
+                        {fullContent}
+                    </p>
                 </div>
             )}
 
