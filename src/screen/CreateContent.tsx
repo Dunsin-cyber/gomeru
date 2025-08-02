@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import SWhandler from "smart-widget-handler";
+import SWHandler from "smart-widget-handler";
 import { useClient } from '@/context';
 import { useRouter } from 'next/navigation';
 import supabase from "@/utils/supabase";
@@ -22,12 +22,12 @@ export default function CreatePage() {
     const { userMetadata, setUserMetadata } = useClient();
     // Initialize communication with host app
     useEffect(() => {
-        SWhandler.client.ready();
+        SWHandler.client.ready();
     }, []);
 
     // Listen for messages from host app
     useEffect(() => {
-        let listener = SWhandler.client.listen((event) => {
+        let listener = SWHandler.client.listen((event) => {
             if (event.kind === "user-metadata") {
                 // Handle user metadata
                 setUserMetadata(event.data?.user);
@@ -71,13 +71,25 @@ export default function CreatePage() {
                 ])
                 .select()
 
-            console.log("data", data, "error", error)
+            // console.log("data", data, "error", error)
             if (error) {
                 setErrorMessage(error.message);
             }
 
             if (data) {
                 setSuccessId(data[0].id);
+                // if (userMetadata) {
+                const parentOrigin =
+                    window.location.ancestorOrigins?.[0] || 'https://yakihonne.com';
+
+                 SWHandler.client.requestEventPublish(
+                    {
+                        kind: 1,
+                        content: `Created new content with id ${data[0].id}`,
+                        tags: [['t', 'yakihonne-unlock']],
+                    },
+                    parentOrigin
+                );
             }
         } catch (err) {
             console.error("Error creating content:", err);
@@ -87,21 +99,92 @@ export default function CreatePage() {
         }
     };
 
+
+
+    useEffect(() => {
+        const listener = SWHandler.host.listen((data) => {
+            console.log('Received message from iframe:', data);
+
+            if (data.kind === 'sign-event') {
+                // Handle sign request
+                // ...
+            }
+        });
+
+        return () => listener.close();
+    }, []);
+
+
     return (
-        <div className="p-4 max-w-lg mx-auto">
-            <h2 className="font-bold text-xl mb-2">Create Locked Content</h2>
-            <input placeholder="Title..." className="w-full border p-2 mb-2" value={title} onChange={(e) => setTitle(e.target.value)} />
-            <input placeholder="Preview Content" className="w-full border p-2 mb-2" value={previewContent} onChange={(e) => setPreviewContent(e.target.value)} />
-            <textarea placeholder="Secret..." className="w-full border p-2 mb-2" rows={4} value={content} onChange={(e) => setContent(e.target.value)} />
-            <input type="number" placeholder="Price in sats" className="w-full border p-2 mb-2" value={price} onChange={(e) => setPrice(e.target.value)} />
-            <input placeholder="Your LN Address (e.g. dunsin@getalby.com)" className="w-full border p-2 mb-4" value={lud16} onChange={(e) => setLud16(e.target.value)} />
-            <button onClick={handleSubmit} className="cursor-pointer bg-black text-white px-4 py-2 rounded">{loading ? "loading" : "Submit"}</button>
-            <p className="text-[#ef4444]">{errorMessage}</p>
+        <div className="p-6 max-w-2xl mx-auto bg-white dark:bg-[#121212] shadow-lg rounded-2xl space-y-4">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Create Locked Content</h2>
+
+            {/* Title */}
+            <input
+                placeholder="Title..."
+                className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500 transition duration-200 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+            />
+
+            {/* Preview */}
+            <input
+                placeholder="Preview Content"
+                className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500 transition duration-200 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+                value={previewContent}
+                onChange={(e) => setPreviewContent(e.target.value)}
+            />
+
+            {/* Secret Content */}
+            <textarea
+                placeholder="Secret..."
+                rows={4}
+                className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500 transition duration-200 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+            />
+
+            {/* Price */}
+            <input
+                type="number"
+                placeholder="Price in sats"
+                className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500 transition duration-200 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+            />
+
+            {/* LN Address */}
+            <input
+                placeholder="Your LN Address (e.g. dunsin@getalby.com)"
+                className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500 transition duration-200 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+                value={lud16}
+                onChange={(e) => setLud16(e.target.value)}
+            />
+
+            {/* Submit Button */}
+            <button
+                onClick={handleSubmit}
+                className="w-full bg-orange-500 hover:bg-orange-600 text-white font-medium py-3 rounded-xl transition-all duration-200 shadow-md"
+            >
+                {loading ? "Loading..." : "Submit"}
+            </button>
+
+            {/* Error Message */}
+            {errorMessage && (
+                <p className="text-red-500 text-sm">{errorMessage}</p>
+            )}
+
+            {/* Success */}
             {successId && (
-                <div className="mt-4 cursor-pointer" onClick={() => router.push("/unlock/" + successId)}>
-                    ✅ Created! View here  <code>{`${window.location.origin}/unlock/${successId}`}</code>
+                <div
+                    className="mt-4 text-green-600 dark:text-green-400 cursor-pointer text-sm"
+                    onClick={() => router.push("/unlock/" + successId)}
+                >
+                    ✅ Created! View here:{" "}
+                    <code className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-md">{`${window.location.origin}/unlock/${successId}`}</code>
                 </div>
             )}
         </div>
-    )
+    );
+
 }

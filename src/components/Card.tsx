@@ -80,50 +80,51 @@ const Card = ({
     }, [])
 
     return (
-        <div id={id} className="border border-gray-300 dark:border-gray-700 p-4 rounded-2xl shadow-md bg-white dark:bg-[#1a1a1a]">
-            <h2 className="text-xl font-semibold mb-2">{title}</h2>
+        <div
+            id={id}
+            className="border border-gray-200 dark:border-gray-700 p-6 rounded-2xl shadow-lg bg-white dark:bg-[#1a1a1a] transition-all duration-300"
+        >
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                {title}
+            </h2>
 
-            <p className="text-gray-700 dark:text-gray-300">{previewContent}</p>
+            <p className="text-gray-700 dark:text-gray-300 mb-3">{previewContent}</p>
 
             {!paid_ && (
-                <div className="mt-2 p-3 bg-gray-100 dark:bg-gray-800 rounded-md text-center text-gray-500 dark:text-gray-400">
+                <div className="mt-2 px-4 py-3 bg-gray-100 dark:bg-gray-800/50 rounded-xl text-center text-gray-500 dark:text-gray-400">
                     <Lock className="inline-block w-5 h-5 mb-1" />
-                    <p className="text-sm">Unlock to view full content</p>
+                    <p className="text-sm font-medium">Unlock to view full content</p>
                 </div>
             )}
 
             {paid_ && (
-                <div className="mt-2 p-3 bg-green-50 dark:bg-green-900 rounded-md text-gray-800 dark:text-gray-100">
+                <div className="mt-3 px-4 py-3 bg-green-50 dark:bg-green-900 rounded-xl text-gray-800 dark:text-gray-100 leading-relaxed">
                     {fullContent}
                 </div>
             )}
 
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-4 gap-3">
-                <div className="text-sm text-gray-500 dark:text-gray-400">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-6 gap-4">
+                <div className="text-sm text-gray-500 dark:text-gray-400 leading-snug">
                     💰 <strong>{price} sats</strong> &middot; ⚡ {lud16} <br />
                     👁️ {realtimeView} views
                 </div>
-                <>
-                    {showPayButton ? (
 
-                        <BitcoinPayWrapper SATS={price} LNURL={lud16} widgetId={id} />
-                    ) : (
-                        <>
-                            {!paid_ && (
-
-                                <button
-                                    onClick={handleZap}
-                                    className="bg-black text-white px-4 py-2 rounded hover:bg-gray-900"
-                                >
-                                    Zap to Unlock
-                                </button>
-                            )}
-                        </>
-                    )}
-                </>
+                {showPayButton ? (
+                    <BitcoinPayWrapper SATS={price} LNURL={lud16} widgetId={id} />
+                ) : (
+                    !paid_ && (
+                        <button
+                            onClick={handleZap}
+                            className="bg-black text-white px-5 py-2 rounded-xl hover:bg-gray-900 transition-all duration-200"
+                        >
+                            Zap to Unlock
+                        </button>
+                    )
+                )}
             </div>
         </div>
     );
+
 };
 
 export default Card;

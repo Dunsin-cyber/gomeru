@@ -49,7 +49,7 @@ function Homepage() {
 
     console.log("content", content)
     return (
-        <div className="flex flex-col justify-center gap-3">
+        <div className="flex flex-col justify-center gap-3 mx-[5%]">
             {loading && (
                 <div className="text-center text-gray-500">
                     Loading content...

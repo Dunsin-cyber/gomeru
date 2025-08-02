@@ -18,7 +18,7 @@ export function BitcoinPayWrapper({ LNURL, SATS, widgetId }: { LNURL: string, SA
     const [invoice, setInvoice] = React.useState<Invoice | undefined>(undefined);
     const [preimage, setPreimage] = React.useState<string | undefined>(undefined);
     const { setPaid, userMetadata, setUserMetadata } = useClient();
-    
+
     // Initialize communication with host app
     useEffect(() => {
         SWHandler.client.ready();
@@ -79,16 +79,16 @@ export function BitcoinPayWrapper({ LNURL, SATS, widgetId }: { LNURL: string, SA
                             console.log("userMetadata", userMetadata)
 
                             // if (userMetadata) {
-                                const result = SWHandler.client.requestEventPublish(
-                                    {
-                                        kind: 1,
-                                        content: `user just unlocked widget ${widgetId}`,
-                                        tags: [['t', 'yakihonne-unlock']],
-                                    },
-                                    parentOrigin
-                                );
+                            const result = SWHandler.client.requestEventPublish(
+                                {
+                                    kind: 1,
+                                    content: `user just unlocked widget ${widgetId}`,
+                                    tags: [['t', 'yakihonne-unlock']],
+                                },
+                                parentOrigin
+                            );
 
-                                console.log('Event published:', result);
+                            console.log('Event published:', result);
                             // }
 
                         }
@@ -113,15 +113,18 @@ export function BitcoinPayWrapper({ LNURL, SATS, widgetId }: { LNURL: string, SA
     return (
         <>
             {invoice && (
-                <Button
-                    // title={`Pay ${SATS} sats to unlock`}
-                    invoice={invoice.paymentRequest}
-                    onPaid={(response) => {
-                        setPreimage(response.preimage);
-                        setPaid(true);
-                    }}
-                    payment={paymentResponse}
-                />
+                <>
+                    <div className="bg-white p-4 rounded-sm border border-gray-300">PAY WITH YAKI</div>
+                    <Button
+                        // title={`Pay ${SATS} sats to unlock`}
+                        invoice={invoice.paymentRequest}
+                        onPaid={(response) => {
+                            setPreimage(response.preimage);
+                            setPaid(true);
+                        }}
+                        payment={paymentResponse}
+                    />
+                </>
             )}
         </>
     );
