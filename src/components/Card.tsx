@@ -32,24 +32,30 @@ const Card = ({
     const handleZap = async () => {
         setShowPayButton(true);
 
-        //increase the views and add user to list of viewers once payment is made
-        if (paid) {
-            const newval = views + 1
-            const { data: data2, error: err2 } = await supabase
-                .from("paywall_content")
-                .update({
-                    views: newval,
-                    viewers: userMetadata.pubkey,
-                })
-                .eq("id", id);
-            setRealtimeView(newval)
-
-
-            console.log("data2", data2, err2)
-            setPaid(false)
-            await checkIfUserPaid()
-        }
     };
+
+    useEffect(() => {
+        const updateViewCount = async () => {
+            //increase the views and add user to list of viewers once payment is made
+            if (paid) {
+                const newval = views + 1
+                const { data: data2, error: err2 } = await supabase
+                    .from("paywall_content")
+                    .update({
+                        views: newval,
+                        viewers: userMetadata.pubkey,
+                    })
+                    .eq("id", id);
+                setRealtimeView(newval)
+
+
+                console.log("data2", data2, err2)
+                setPaid(false)
+                await checkIfUserPaid()
+            }
+        }
+        updateViewCount()
+    }, [paid])
 
     const checkIfUserPaid = async () => {
         try {
@@ -59,7 +65,7 @@ const Card = ({
                 .eq("id", id);
 
             if (data) {
-                console.log("viewers", data)
+
                 const isPaid = data.some(
                     (viewer) => viewer.viewers === userMetadata.pubkey
                 );

@@ -47,7 +47,7 @@ function Homepage() {
         fetchContent();
     }, [])
 
-    console.log("content", content)
+ 
     return (
         <div className="flex flex-col justify-center gap-3 mx-[5%]">
             {loading && (

@@ -5,12 +5,14 @@ import SWHandler from "smart-widget-handler";
 import { useClient } from '@/context';
 import { useRouter } from 'next/navigation';
 import supabase from "@/utils/supabase";
+import { IoIosArrowBack } from 'react-icons/io';
 
 export default function CreatePage() {
     const [content, setContent] = useState('');
     const [title, setTitle] = useState('');
     const [price, setPrice] = useState('');
-    const [lud16, setLud16] = useState('');
+    const { userMetadata, setUserMetadata } = useClient();
+    const [lud16, setLud16] = useState(userMetadata?.nip05 || '');
     const [previewContent, setPreviewContent] = useState("")
     const [successId, setSuccessId] = useState<string | null>(null);
     // const [userMetadata, setUserMetadata] = useState<any>(null);
@@ -19,11 +21,12 @@ export default function CreatePage() {
     const [loading, setLoading] = useState(false);
     const router = useRouter();
 
-    const { userMetadata, setUserMetadata } = useClient();
     // Initialize communication with host app
     useEffect(() => {
         SWHandler.client.ready();
     }, []);
+
+    console.log("userMetadata", userMetadata)
 
     // Listen for messages from host app
     useEffect(() => {
@@ -176,12 +179,23 @@ export default function CreatePage() {
 
             {/* Success */}
             {successId && (
-                <div
-                    className="mt-4 text-green-600 dark:text-green-400 cursor-pointer text-sm"
-                    onClick={() => router.push("/unlock/" + successId)}
-                >
-                    ✅ Created! View here:{" "}
-                    <code className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-md">{`${window.location.origin}/unlock/${successId}`}</code>
+                <div className="mt-6 space-y-3 text-sm text-green-600 dark:text-green-400">
+                    <div
+                        className="cursor-pointer"
+                        onClick={() => router.push("/unlock/" + successId)}
+                    >
+                        ✅ Created!
+    
+                    </div>
+
+                    {/* Return Home */}
+                    <button
+                        onClick={() => router.push("/")}
+                        className="flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-orange-500 dark:hover:text-orange-400 transition-colors"
+                    >
+                        <IoIosArrowBack className="w-4 h-4" />
+                        <span>Return to Home</span>
+                    </button>
                 </div>
             )}
         </div>

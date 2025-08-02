@@ -114,7 +114,6 @@ export function BitcoinPayWrapper({ LNURL, SATS, widgetId }: { LNURL: string, SA
         <>
             {invoice && (
                 <>
-                    <div className="bg-white p-4 rounded-sm border border-gray-300">PAY WITH YAKI</div>
                     <Button
                         // title={`Pay ${SATS} sats to unlock`}
                         invoice={invoice.paymentRequest}
