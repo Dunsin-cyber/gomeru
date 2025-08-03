@@ -17,7 +17,7 @@ const Button = dynamic(
 export function BitcoinPayWrapper({ LNURL, SATS, widgetId }: { LNURL: string, SATS: number, widgetId: string }) {
     const [invoice, setInvoice] = React.useState<Invoice | undefined>(undefined);
     const [preimage, setPreimage] = React.useState<string | undefined>(undefined);
-    const { setPaid, userMetadata, setUserMetadata } = useClient();
+    const { setPaid, userMetadata, setUserMetadata, setWidgetUnlocked } = useClient();
 
     // Initialize communication with host app
     useEffect(() => {
@@ -72,6 +72,7 @@ export function BitcoinPayWrapper({ LNURL, SATS, widgetId }: { LNURL: string, SA
                         await invoice.verifyPayment();
                         if (invoice.preimage) {
                             setPaid(true);
+                            setWidgetUnlocked(widgetId)
                             setPreimage(invoice.preimage);
                             clearInterval(checkPaymentInterval);
                             // Optional: send signed nostr event

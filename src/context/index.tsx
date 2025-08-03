@@ -8,6 +8,8 @@ type UserContextType = {
     setPaid: React.Dispatch<React.SetStateAction<boolean>>;
     userMetadata: any;
     setUserMetadata: React.Dispatch<React.SetStateAction<any>>;
+    widgetUnlocked: string | null;
+    setWidgetUnlocked: React.Dispatch<React.SetStateAction<string | null>>;
 };
 
 const UserContext = React.createContext<UserContextType | undefined>(undefined);
@@ -18,6 +20,7 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [paid, setPaid] = useState(false);
     const [userMetadata, setUserMetadata] = useState<any>(null); // Assuming user state is needed
+    const [widgetUnlocked,setWidgetUnlocked] = useState<string | null>(null)
 
 
     return (
@@ -25,7 +28,10 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
             value={{
                 isDarkMode,
                 setIsDarkMode,
-                paid, setPaid, userMetadata, setUserMetadata
+                paid, setPaid, userMetadata, setUserMetadata,
+                widgetUnlocked,
+                setWidgetUnlocked
+
             }}
         >
             {children}

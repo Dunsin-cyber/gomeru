@@ -24,7 +24,7 @@ const Card = ({
     lud16,
     views,
 }: CardProps) => {
-    const { paid, setPaid, userMetadata } = useClient();
+    const { paid, setPaid, userMetadata, widgetUnlocked, setWidgetUnlocked } = useClient();
     const [showPayButton, setShowPayButton] = useState(false)
     const [paid_, setPaid_] = useState(false)
     const [realtimeView, setRealtimeView] = useState(views)
@@ -37,40 +37,52 @@ const Card = ({
     useEffect(() => {
         const updateViewCount = async () => {
             //increase the views and add user to list of viewers once payment is made
-            if (paid) {
+        
+            console.log("paid", paid, "widgetUnlocked", widgetUnlocked, "id", id)
+            if (paid && (widgetUnlocked === id)) {
                 const newval = views + 1
                 const { data: data2, error: err2 } = await supabase
                     .from("paywall_content")
                     .update({
-                        views: newval,
-                        viewers: userMetadata.pubkey,
+                        views: newval
+                      
                     })
                     .eq("id", id);
                 setRealtimeView(newval)
 
+               const {data,error} = await supabase.from("viewers").insert({
+                    content_id: id,
+                    npub: userMetadata.pubkey
+                })
+                setWidgetUnlocked(null)
 
-                console.log("data2", data2, err2)
+                console.log("data from adding user as a viewer", data, error)
+
+                console.log("data2", data2, err2,)
                 setPaid(false)
                 await checkIfUserPaid()
             }
         }
         updateViewCount()
-    }, [paid])
+    }, [paid, widgetUnlocked])
 
     const checkIfUserPaid = async () => {
         try {
             const { data, error } = await supabase
-                .from("paywall_content")
-                .select("viewers")
-                .eq("id", id);
+                .from("viewers")
+                .select("id")
+                .eq("npub", userMetadata?.pubkey)
+                .eq("content_id", id);
 
-            if (data) {
 
-                const isPaid = data.some(
-                    (viewer) => viewer.viewers === userMetadata.pubkey
-                );
+            if (data.length > 0) {
+                    console.log("user has paid", data)
+                // const isPaid = data.some(
+                //     (viewer) => viewer.viewers === userMetadata.pubkey
+                // );
 
-                if (isPaid) setPaid_(true);
+                setPaid_(true);
+                // if (isPaid) 
             }
             if (error) {
                 console.log("ERROR", error)
@@ -82,6 +94,7 @@ const Card = ({
 
     useEffect(() => {
         checkIfUserPaid()
+        // setWidgetUnlocked(null)
 
     }, [])
 
