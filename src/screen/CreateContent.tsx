@@ -31,6 +31,8 @@ export default function CreatePage() {
     // Listen for messages from host app
     useEffect(() => {
         let listener = SWHandler.client.listen((event) => {
+            //? this can also be
+            //(event.data.user.kind === 0) to check if it's a user metadata event
             if (event.kind === "user-metadata") {
                 // Handle user metadata
                 setUserMetadata(event.data?.user);

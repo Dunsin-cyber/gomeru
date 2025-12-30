@@ -17,6 +17,7 @@ function Naviagtion() {
     // Listen for messages from host app.
     useEffect(() => {
         let listener = SWhandler.client.listen((event) => {
+            console.log("naviagation log:", event);
             if (event.kind === "user-metadata") {
                 setUserMetadata(event.data?.user);
                 setHostOrigin(event.data?.host_origin);
